@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import joblib
+import os
 
 
 # Load dataset
@@ -40,6 +41,10 @@ predictions = model.predict(X_test)
 accuracy = accuracy_score(y_test, predictions)
 
 print("Model Accuracy:", accuracy)
+
+
+# Create models directory if it does not exist
+os.makedirs("models", exist_ok=True)
 
 
 # Save trained model
