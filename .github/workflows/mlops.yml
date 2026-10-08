@@ -25,7 +25,26 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests
+        id: tests
         run: pytest
 
       - name: Train ML model
+        id: train
         run: python src/train.py
+
+      - name: Record pipeline run
+        if: always()
+        env:
+          RUN_ID: ${{ github.run_id }}
+          COMMIT_ID: ${{ github.sha }}
+          PIPELINE_STATUS: ${{ job.status }}
+          TEST_OUTCOME: ${{ steps.tests.outcome }}
+          TRAIN_OUTCOME: ${{ steps.train.outcome }}
+        run: python src/record_run.py
+
+      - name: Upload pipeline data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pipeline-run-${{ github.run_id }}
+          path: data/pipeline_runs.csv
