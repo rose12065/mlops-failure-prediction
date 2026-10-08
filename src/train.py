@@ -6,6 +6,12 @@ import joblib
 import os
 
 
+failure_mode = os.getenv("FAILURE_MODE", "none")
+
+if failure_mode == "training":
+    raise RuntimeError("Controlled training failure for experiment")
+
+
 # Load dataset
 data = load_iris()
 

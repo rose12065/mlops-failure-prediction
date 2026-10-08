@@ -3,6 +3,16 @@ name: MLOps Pipeline
 on:
   push:
   pull_request:
+  workflow_dispatch:
+    inputs:
+      failure_mode:
+        description: "Select failure mode for experiment"
+        required: true
+        default: "none"
+        type: choice
+        options:
+          - none
+          - training
 
 jobs:
   mlops:
@@ -30,6 +40,8 @@ jobs:
 
       - name: Train ML model
         id: train
+        env:
+          FAILURE_MODE: ${{ inputs.failure_mode || 'none' }}
         run: python src/train.py
 
       - name: Record pipeline run
