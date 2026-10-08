@@ -44,6 +44,17 @@ jobs:
           FAILURE_MODE: ${{ inputs.failure_mode || 'none' }}
         run: python src/train.py
 
+      - name: Calculate changed files
+        id: changes
+        if: always()
+        run: |
+          if git rev-parse HEAD^ >/dev/null 2>&1; then
+            COUNT=$(git diff --name-only HEAD^ HEAD | wc -l)
+          else
+            COUNT=0
+          fi
+          echo "changed_files=$COUNT" >> "$GITHUB_OUTPUT"
+
       - name: Record pipeline run
         if: always()
         env:
@@ -52,6 +63,7 @@ jobs:
           PIPELINE_STATUS: ${{ job.status }}
           TEST_OUTCOME: ${{ steps.tests.outcome }}
           TRAIN_OUTCOME: ${{ steps.train.outcome }}
+          CHANGED_FILES: ${{ steps.changes.outputs.changed_files }}
         run: python src/record_run.py
 
       - name: Upload pipeline data

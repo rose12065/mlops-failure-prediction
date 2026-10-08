@@ -12,6 +12,7 @@ CSV_FILE = DATA_DIR / "pipeline_runs.csv"
 run_id = os.getenv("RUN_ID", "local")
 commit_id = os.getenv("COMMIT_ID", "local")
 pipeline_status = os.getenv("PIPELINE_STATUS", "UNKNOWN")
+changed_files = os.getenv("CHANGED_FILES", "0")
 
 test_outcome = os.getenv("TEST_OUTCOME", "UNKNOWN")
 train_outcome = os.getenv("TRAIN_OUTCOME", "UNKNOWN")
@@ -43,17 +44,19 @@ with open(CSV_FILE, "a", newline="") as file:
             "timestamp",
             "pipeline_status",
             "failure_stage",
-            "failure_type"
+            "failure_type",
+            "changed_files"
         ])
 
-    writer.writerow([
-        run_id,
-        commit_id,
-        datetime.now().isoformat(),
-        pipeline_status,
-        failure_stage,
-        failure_type
-    ])
+        writer.writerow([
+            run_id,
+            commit_id,
+            datetime.now().isoformat(),
+            pipeline_status,
+            failure_stage,
+            failure_type,
+            changed_files
+        ])
 
 
 print(f"Pipeline run recorded: {run_id}")
